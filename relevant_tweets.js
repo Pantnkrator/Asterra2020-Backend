@@ -32,21 +32,22 @@ var Tweet = mongoose.model('Tweets', twitterSchema);
 
 setInterval(()=> {
   console.log("CAll search Api ");
-  client.get('search/tweets.json', {q: 'flooding',geocode:'38.903219,-77.026713,60km',tweet_mode:'extended'}, function(error, tweets, response) {
+  client.get('search/tweets', {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended'}, function(error, tweets, response) {
     console.log("total tweets: ",tweets.statuses.length);  
     tweets.statuses.forEach(function(tweet) {
+      if(tweet.geo_enabled ) {
        let newTweet = new  Tweet( {
-          created_at: toString( tweet.created_at ),
-          id: tweet.id,
-          id_str: JSON.stringify(tweet.id_str),
-          full_text: (tweet.full_text), 
-          entities: JSON.stringify(tweet.entities), 
-          user: JSON.stringify(tweet.user),
-          geo: JSON.stringify(tweet.geo),
-          coordinates: JSON.stringify(tweet.coordinates),
-          fullTweet: JSON.stringify(tweet)
-        });
-        Tweet.find({id:tweet.id}, function (err, docs) {
+        created_at: toString( tweet.created_at ),
+        id: tweet.id,
+        id_str: JSON.stringify(tweet.id_str),
+        full_text: (tweet.full_text), 
+        entities: JSON.stringify(tweet.entities), 
+        user: JSON.stringify(tweet.user),
+        geo: JSON.stringify(tweet.geo),
+        coordinates: JSON.stringify(tweet.coordinates),
+        fullTweet: JSON.stringify(tweet)
+      });
+      Tweet.find({id:tweet.id}, function (err, docs) {
           if (docs.length){
               console.log("Already in DB", tweet.id);
           }else{
@@ -58,8 +59,9 @@ setInterval(()=> {
               });
           }
         });
+      }
      });
   });
   
   
-},3000 );
+},400000 );
