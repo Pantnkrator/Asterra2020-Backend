@@ -21,13 +21,17 @@ var twitterSchema = new mongoose.Schema({
   id: Number,
   id_str: String,
   full_text: String,
-  entities: String, 
   user: String, 
   geo:  String,
   coordinates: String, 
-  fullTweet: String 
+  place: String
+});
+var twitterExtra = new mongoose.Schema({
+	twitterfull: String
 });
 var Tweet = mongoose.model('Tweets', twitterSchema);
+var TweetFull = mongoose.model('tweetsFull', twitterExtra);
+
 let createTweet = new Tweet({
 	id_str:"1"
 });
@@ -38,13 +42,13 @@ createTweet.save();
   // setInterval(()=>{
     if(firsttime ) {
       firsttime = false;
-      let i = 124444000000;
+         let i = 1243209989845156900;
       let intvl = setInterval( () => {
-        i = i+100;
+        i = i+9000;
         let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
-        config['since_id'] = i;
+        config['max_id'] = i;
         searchInClient(config);
-        if( i >= 1200018232640000000 ){
+        if( i >= 1244018232740000000 ){
           clearInterval(intvl);
         }
       },5000);
@@ -52,6 +56,7 @@ createTweet.save();
       
     let intvl2 = setInterval(()=>{ 
       Tweet.findOne().sort({id_str:-1}).then((docs)=>{  
+	
         if(!docs) { docs = {id_str:"1"}}
         console.log("Since Id", docs.id_str);
         if(docs) {
@@ -69,22 +74,27 @@ createTweet.save();
   
   
 function searchInClient (config) {
+	console.log("config", config);
   client.get('search/tweets', config , function(error, tweets, response) {
     if(error) {
       console.log("ERROR", error);
     } else {
       tweets.statuses.forEach(function(tweet) { 
-        if(tweet.geo_enabled) {
+	console.log(tweet.id_str, tweet.user.geo_enabled,tweet.geo, tweet.coordinates,tweet.place );        
+
+if(tweet.user.geo_enabled || tweet.geo || tweet.place || tweet.coordinates) {
+		let tweetFull = new TweetFull( { twitterfull: JSON.stringify(tweet)});
+	tweetFull.save();
+
           let newTweet = new  Tweet( {
           created_at: tweet.created_at.toString(),
           id: tweet.id,
           id_str: tweet.id_str,
           full_text: (tweet.full_text), 
-          entities: JSON.stringify(tweet.entities), 
           user: JSON.stringify(tweet.user),
           geo: JSON.stringify(tweet.geo),
           coordinates: JSON.stringify(tweet.coordinates),
-          fullTweet: JSON.stringify(tweet)
+	  place:tweet.place
         });
         Tweet.find({id:tweet.id}, function (err, docs) {
             if (docs.length){
