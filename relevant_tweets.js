@@ -29,20 +29,20 @@ var twitterSchema = new mongoose.Schema({
 });
 var Tweet = mongoose.model('Tweets', twitterSchema);
 let createTweet = new Tweet({
-	id_str:"122200000000"
+	id_str:"1"
 });
 createTweet.save();
 
   console.log("Call search Api ");
   setInterval(()=>{
     Tweet.findOne().sort({id_str:-1}).then((docs)=>{  
-      if(!docs) { docs = {id_str:"12222220000000"}}
+      if(!docs) { docs = {id_str:"1"}}
 	console.log("Since Id", docs.id_str);
       if(docs) {
         let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
-		if(docs.id_str!='12222220000000' || docs.id_str != '122200000000') {
-			config['since_id']=docs.id_str;
-		}
+      if(docs.id_str!='1') {
+        config['since_id']=docs.id_str;
+      }
         console.log(config);
         client.get('search/tweets', config , function(error, tweets, response) {
           if(error) {
