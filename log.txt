@@ -1,0 +1,9 @@
+Call search Api 
+(node:6287) DeprecationWarning: current Server Discovery and Monitoring engine is deprecated, and will be removed in a future version. To use the new Server Discover and Monitoring engine, pass option { useUnifiedTopology: true } to the MongoClient constructor.
+Since Id 122200000000
+{ q: 'flooding',
+  geocode: '38.903219,-77.026713,100km',
+  tweet_mode: 'extended',
+  count: 10000,
+  since_id: '122200000000' }
+total tweets:  100
