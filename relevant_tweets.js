@@ -94,7 +94,7 @@ if(tweet.user.geo_enabled || tweet.geo || tweet.place || tweet.coordinates) {
           user: JSON.stringify(tweet.user),
           geo: JSON.stringify(tweet.geo),
           coordinates: JSON.stringify(tweet.coordinates),
-	  place:tweet.place
+	  place:JSON.stringify(tweet.place)
         });
         Tweet.find({id:tweet.id}, function (err, docs) {
             if (docs.length){
