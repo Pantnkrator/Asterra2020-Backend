@@ -1,0 +1,77 @@
+require('dotenv').config()  
+var Twit = require('twit')
+
+var mongoose = require('mongoose');
+mongoose.connect('mongodb://localhost/twitters', {useNewUrlParser: true});
+
+var T = new Twit({
+  consumer_key:         process.env.TWITTER_CONSUMER_KEY,
+  consumer_secret:       process.env.TWITTER_CONSUMER_SECRET,
+  access_token:         process.env.ACCESS_TOKEN,
+  access_token_secret:  process.env.ACCESS_TOKEN_SECRET,
+  timeout_ms:           60*1000,  // optional HTTP request timeout to apply to all requests.
+});
+
+var stream = T.stream('statuses/sample')
+
+var db = mongoose.connection;
+db.on('error', console.error.bind(console, 'connection error:'));
+db.once('open', function() {
+  // we're connected!
+});
+
+var twitterSchema = new mongoose.Schema({
+  created_at: String,
+  id: Number,
+  id_str: String,
+  full_text: String,
+  user: String, 
+  geo:  String,
+  coordinates: String, 
+  place: String
+});
+
+var Tweet = mongoose.model('Tweets', twitterSchema);
+
+const longitude1 = -124.665349;
+const latitude1 = 26.052120;
+const longitude2 = -52.419255;
+const latitude2 = 49.905444;
+const DC = [longitude1, latitude1, longitude2,latitude2];
+var stream = T.stream('statuses/filter', { locations: DC })
+const filters = [
+  'flooding',
+  'landslide',
+  'wildfire',
+  'drought',
+  'earthquake',
+  'covid'
+];
+stream.on('tweet', function (tweet) {
+  if(tweet.geo || tweet.coordinates) {
+    if ( tweet.text.includes(filters[0]) || tweet.text.includes(filters[1]) || tweet.text.includes(filters[2]) || tweet.text.includes(filters[3]) || tweet.text.includes(filters[4]) || tweet.text.includes(filters[5])   ) {
+      console.log(tweet.text);
+      insertTwitter(tweet);
+    } 
+  }  
+});
+
+
+function insertTwitter (tweet) {
+  let newTweet = new  Tweet( {
+    created_at: tweet.created_at.toString(),
+    id: tweet.id,
+    id_str: tweet.id_str,
+    full_text: (tweet.text), 
+    user: JSON.stringify(tweet.user),
+    geo: JSON.stringify(tweet.geo),
+    coordinates: JSON.stringify(tweet.coordinates),
+    place:JSON.stringify(tweet.place)
+  });
+  newTweet.save(function(err){
+    if(err) {
+      console.log("Failed saving ", err);
+    }
+  });
+
+}

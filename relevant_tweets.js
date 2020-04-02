@@ -32,47 +32,61 @@ var twitterExtra = new mongoose.Schema({
 var Tweet = mongoose.model('Tweets', twitterSchema);
 var TweetFull = mongoose.model('tweetsFull', twitterExtra);
 
-let createTweet = new Tweet({
-	id_str:"1"
-});
-let firsttime = true; 
-createTweet.save();
+// let createTweet = new Tweet({
+// 	id_str:"1"
+// });
+// let firsttime = true; 
+// createTweet.save();
 
-  console.log("Call search Api ");
-  // setInterval(()=>{
-    if(firsttime ) {
-      firsttime = false;
-         let i = 1243209989845156900;
-      let intvl = setInterval( () => {
-        i = i+9000;
-        let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
-        config['max_id'] = i;
-        searchInClient(config);
-        if( i >= 1244018232740000000 ){
-          clearInterval(intvl);
-        }
-      },5000);
-    }
+//   console.log("Call search Api ");
+//   // setInterval(()=>{
+//     if(firsttime ) {
+//       firsttime = false;
+//          let i = 1243209989845156900;
+//       let intvl = setInterval( () => {
+//         i = i+9000;
+//         let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
+//         config['max_id'] = i;
+//         searchInClient(config);
+//         if( i >= 1244018232740000000 ){
+//           clearInterval(intvl);
+//         }
+//       },5000);
+//     }
       
-    let intvl2 = setInterval(()=>{ 
-      Tweet.findOne().sort({id_str:-1}).then((docs)=>{  
+//     let intvl2 = setInterval(()=>{ 
+//       Tweet.findOne().sort({id_str:-1}).then((docs)=>{  
 	
-        if(!docs) { docs = {id_str:"1"}}
-        console.log("Since Id", docs.id_str);
-        if(docs) {
-          let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
-          if(docs.id_str!='1') {
-            config['since_id']=docs.id_str;
-          }
-          console.log(config);
-          searchInClient(config);
-        }
-      });
-    }, 40000);
+//         if(!docs) { docs = {id_str:"1"}}
+//         console.log("Since Id", docs.id_str);
+//         if(docs) {
+//           let config = {q: 'flooding',geocode:'38.903219,-77.026713,100km',tweet_mode:'extended', count:10000};
+//           if(docs.id_str!='1') {
+//             config['since_id']=docs.id_str;
+//           }
+//           console.log(config);
+//           searchInClient(config);
+//         }
+//       });
+//     }, 40000);
     
-  // }, 180000);
+//   // }, 180000);
   
   
+function startStreaming () {
+  const longitude1 = -124.665349;
+  const latitude1 = 26.052120;
+  const longitude2 = -52.419255;
+  const latitude2 = 49.905444;
+  const DC = [ latitude1, longitude1, latitude2, longitude2];
+  console.log("CREATEING STRAEAMS");
+  let stream = client.stream('statuses/filter.json', {track:'flooding'});
+  stream.on('tweet', function(tweet) {
+    console.log("TWEET",tweet);
+  })
+}
+startStreaming();
+
 function searchInClient (config) {
 	console.log("config", config);
   client.get('search/tweets', config , function(error, tweets, response) {
