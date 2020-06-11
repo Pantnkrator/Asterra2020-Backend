@@ -21,7 +21,7 @@ db.once('open', function() {
 });
 
 var twitterSchema = new mongoose.Schema({
-  created_at: String,
+  created_at: Date,
   id: Number,
   id_str: String,
   full_text: String,
@@ -43,9 +43,7 @@ const filters = [
   'flooding',
   'landslide',
   'wildfire',
-  'drought',
-  'earthquake',
-  'covid'
+  'drought'
 ];
 stream.on('tweet', function (tweet) {
   if(tweet.geo || tweet.coordinates) {
@@ -59,7 +57,7 @@ stream.on('tweet', function (tweet) {
 
 function insertTwitter (tweet) {
   let newTweet = new  Tweet( {
-    created_at: tweet.created_at.toString(),
+    created_at: new Date(tweet.created_at.toString()),
     id: tweet.id,
     id_str: tweet.id_str,
     full_text: (tweet.text), 
