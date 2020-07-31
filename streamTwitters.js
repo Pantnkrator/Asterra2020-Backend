@@ -41,13 +41,26 @@ const DC = [longitude1, latitude1, longitude2,latitude2];
 var stream = T.stream('statuses/filter', { locations: DC })
 const filters = [
   'flooding',
-  'landslide',
-  'wildfire',
-  'drought'
+//  'landslide',
+//  'wildfire',
+   'drought',
+  'flood', 
+ 'inundation', 
+  'inundación', 
+  'inundacion', 
+  'deluge', 
+   'torrent', 
+   'flash flood', 
+   'downpour', 
+   'torrent', 
+   'overflow'
 ];
+console.log("STARTING TWEETS STREAM");
 stream.on('tweet', function (tweet) {
+  console.log("Tweet enters", tweet.text);
   if(tweet.geo || tweet.coordinates) {
-    if ( tweet.text.includes(filters[0]) || tweet.text.includes(filters[1]) || tweet.text.includes(filters[2]) || tweet.text.includes(filters[3]) || tweet.text.includes(filters[4]) || tweet.text.includes(filters[5])   ) {
+    if ( tweet.text.includes(filters[0]) || tweet.text.includes(filters[1]) || tweet.text.includes(filters[2]) || tweet.text.includes(filters[3]) || tweet.text.includes(filters[4])  || tweet.text.includes(filters[5]) || tweets.text.includes(filters[6]) || tweets.text.includes(filters[7]) || tweets.text.includes(filters[8]) || tweets.text.includes(filters[9])
+ || tweets.text.includes(filters[10]) || tweets.text.includes(filters[11])   ) {
       console.log(tweet.text);
       insertTwitter(tweet);
     } 
