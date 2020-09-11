@@ -33,10 +33,10 @@ var twitterSchema = new mongoose.Schema({
 
 var Tweet = mongoose.model('Tweets', twitterSchema);
 
-const longitude1 = -124.665349;
-const latitude1 = 26.052120;
-const longitude2 = -52.419255;
-const latitude2 = 49.905444;
+const longitude1 = -77.255738;
+const latitude1 = 38.771216;
+const longitude2 = -76.836740;
+const latitude2 = 39.014916;
 const DC = [longitude1, latitude1, longitude2,latitude2];
 var stream = T.stream('statuses/filter', { locations: DC })
 const filters = [
