@@ -80,7 +80,8 @@ function insertTwitter (tweet) {
     place:JSON.stringify(tweet.place)
   });
   newTweet.save(function(err){
-    if(err) {
+    console.log("SAVED INTO MONGO");
+	if(err) {
       console.log("Failed saving ", err);
     }
   });
